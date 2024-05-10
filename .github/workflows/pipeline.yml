@@ -24,51 +24,55 @@ jobs:
         run: |
           mvn package
           
-      - name: Ejecucion Test Unitarios
-        run: |
-          mvn package test
+      #- name: Test Unitarios
+        #run: |
+          #mvn package test
           
-      - name: ejecución de pruebas
-        run: |
-          mvn pdf:pdf
+      #- name: ejecución de pruebas
+        #run: |
+          #mvn pdf:pdf
           
-      - name: crear reporte de jacoco
-        uses: actions/upload-artifact@v2
+      - name: Unit Test 
+        run: |
+          mvn clean verify
+
+      - name: Generate report jacoco
+        run: mvn jacoco:report
+
+      - name: JaCoCo Code Coverage Report
+        id: jacoco_reporter
+        uses: PavanMudigonda/jacoco-reporter@v5.0
+        with:
+          coverage_results_path: jacoco-report/testRR.xml
+          coverage_report_name: Coverage
+          coverage_report_title: JaCoCo
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_check_run: false
+          minimum_coverage: 70
+          fail_below_threshold: true
+          publish_only_summary: false
+          
+      - name: Upload JaCoCo Report
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: target/
+          path: target/site/jacoco
+
+
+      - name: Run JMeter Action on a test
+        uses: rbhadti94/apache-jmeter-action@v0.5.0
+        with:
+          testFilePath: tests/sample_test.jmx
+          outputReportsFolder: reports/
+          args: "--loglevel INFO"
           
-      - name: configuracion de java para sonar
-        uses: actions/setup-java@main
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-      - name: Analisis SonarCloud
-        run: |
-          mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
-          -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.organization=paulovegaa \
-          -Dsonar.projectKey=paulovegaa_microservicio-java
-      #- name: SonarQube Quality Gate Check
-        #uses: 
-      - name: Docker Login
-        uses: docker/login-action@v3.1.0
-        with:
-          username: paulovegaa
-          password: ${{ secrets.DOCKER_PASS }}
-      - name: Docker Build 
-        run: |
-          docker build -t paulovegaa/microservicio-java:latest .
-      - name: Docker push 
-        run: |
-          docker push paulovegaa/microservicio-java
   deploy:
     needs: build
     runs-on: self-hosted
     steps:
       - name: Clonacion de repositorio para deploy
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Despliegue local
         run: |
           kubectl apply -f deploy.yaml
+
