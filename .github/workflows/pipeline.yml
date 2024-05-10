@@ -58,6 +58,12 @@ jobs:
           name: jacoco-report
           path: target/site/jacoco
 
+      - name: Setup Java JDK for SonarCloud
+        uses: actions/setup-java@v4.2.1
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Analisis SonarCloud
         run: |
             mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
