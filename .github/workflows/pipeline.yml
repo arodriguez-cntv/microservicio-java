@@ -74,7 +74,7 @@ jobs:
         
       - name: Despliegue local
         run: |
-          kubectl apply -f deploy.yaml
+          kubectl apply -f deploy.yml
 
 
   testjmeter:
