@@ -59,26 +59,40 @@ jobs:
           path: target/site/jacoco
 
 
-      - name: Run JMeter Action on a test
-        uses: rbhadti94/apache-jmeter-action@v0.5.0
-        with:
-          testFilePath: test_plan.jmx
-          outputReportsFolder: reports/
-          args: "--loglevel INFO"
-          
-      - name: Upload JMeter Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: jmeter-test-results
-          path: reports/
+
           
   deploy:
+  
     needs: build
+    
     runs-on: self-hosted
+    
     steps:
+    
       - name: Clonacion de repositorio para deploy
         uses: actions/checkout@v4
+        
       - name: Despliegue local
         run: |
           kubectl apply -f deploy.yaml
 
+
+  testjmeter:
+  
+      needs: deploy
+      
+      runs-on: self-hosted
+      
+      steps:
+        - name: Run JMeter Action on a test
+          uses: rbhadti94/apache-jmeter-action@v0.5.0
+          with:
+            testFilePath: test_plan.jmx
+            outputReportsFolder: reports/
+            args: "--loglevel INFO"
+            
+        - name: Upload JMeter Report
+          uses: actions/upload-artifact@v4
+          with:
+            name: jmeter-test-results
+            path: reports/
