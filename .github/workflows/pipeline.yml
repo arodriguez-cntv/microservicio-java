@@ -58,6 +58,20 @@ jobs:
           name: jacoco-report
           path: target/site/jacoco
 
+      - name: Analisis SonarCloud
+        run: |
+            mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
+            -Dsonar.token=${{secrets.SONAR_TOKEN}} \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.organization=arodriguez-cntv \
+            -Dsonar.projectKey=arodriguez-cntv_microservicio-java
+            
+      - name: SonarQube Quality Gate Check
+        env:
+           SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+        with:
+          scanMetadataReportFile: target/sonar/report-task.txt
 
 
           
