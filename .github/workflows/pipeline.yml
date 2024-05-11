@@ -28,9 +28,7 @@ jobs:
         #run: |
           #mvn package test
           
-      #- name: ejecución de pruebas
-        #run: |
-          #mvn pdf:pdf
+
           
       - name: Unit Test 
         run: |
