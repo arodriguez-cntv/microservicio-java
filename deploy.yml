@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: microservicio-java
-        image: arodriguez-cntv/microservicio-java:latest
+        image: arodriguezcntv/microservicio-java:latest
         ports:
         - containerPort: 8081
 
