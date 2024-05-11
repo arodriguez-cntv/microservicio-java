@@ -94,14 +94,28 @@ jobs:
   deploy:
   
     needs: build
-    
     runs-on: self-hosted
-    
     steps:
-    
       - name: Clonacion de repositorio para deploy
         uses: actions/checkout@v4
         
       - name: Despliegue local
         run: |
           kubectl apply -f deploy.yml
+
+          
+  pruebasjmeter:
+
+      needs: deploy
+      runs-on: self-hosted
+      steps:
+      
+          - name: Run JMeter Test
+            run: |
+              C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t C:\pruebas\test_plan.jmx -l C:\pruebas\test-results.jtl
+    
+          - name: Upload test results 
+            uses: actions/upload-artifact@v4
+            with:
+              name: test-results.jtl
+              path: C:\pruebas\
