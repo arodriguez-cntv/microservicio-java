@@ -79,7 +79,14 @@ jobs:
         with:
           scanMetadataReportFile: target/sonar/report-task.txt
 
+      - name: Docker Login
+        uses: docker/login-action@v3.1.0
+        with:
+          username: arodriguezcntv
+          password: ${{ secrets.DOCKER_PASS }}
 
+
+          
           
   deploy:
   
