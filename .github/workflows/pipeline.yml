@@ -85,7 +85,13 @@ jobs:
           username: arodriguezcntv
           password: ${{ secrets.DOCKER_PASS }}
 
+      - name: Docker Build 
+        run: |
+          docker build -t arodriguezcntv/microservicio-java:latest .
 
+      - name: Docker Push 
+        run: |
+          docker push arodriguezcntv/microservicio-java:latest
           
           
   deploy:
